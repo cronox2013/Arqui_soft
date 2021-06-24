@@ -108,7 +108,7 @@ public class CargarRIU extends JFrame {
         Registros registros = red.leerRegistro();
         String res="--- Registros ---\n";
         for(Registro reg : registros){
-            String arr= "Nombre: "+reg.getDate() +"\n\tSintomas: ";
+            String arr= "Nombre: "+reg.getFecha() +"\n\tSintomas: ";
             for(Sintoma sin : reg.getSintomas()){
                 arr+=sin+" || ";
             }

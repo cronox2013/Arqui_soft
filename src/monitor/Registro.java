@@ -18,7 +18,7 @@ public class Registro implements Serializable {
     public Sintomas getSintomas() {
         return sintomas;
     }
-    public Date getDate() {
+    public Date getFecha() {
         return fecha;
     }
 
