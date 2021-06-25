@@ -24,15 +24,12 @@ public class DiagnosticoSimple extends FuncionDiagnostico {
     @Override
     public int diagnostico(Registros registros) {
         int pesoSintomas = 0;
-
-        try {
+        if(!registros.isEmpty()){
             Registro registro = registros.peek();
             Sintomas sintomas = registro.getSintomas();
             for (Sintoma s: sintomas) {
                 pesoSintomas += pesos.get(s);
             }
-        }catch (NullPointerException ex){
-
         }
         return pesoSintomas;
     }

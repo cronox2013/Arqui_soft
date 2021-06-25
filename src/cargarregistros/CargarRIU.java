@@ -19,15 +19,21 @@ public class CargarRIU extends JFrame {
     private JTextArea impresion;
     private JList lista1;
     private JList lista2;
+    private JScrollPane scroll;
+    private JScrollPane scrollList1;
+    private JScrollPane scrollList2;
     private Registro ultimo;
     DefaultListModel l1;
     DefaultListModel l2;
     Redactor red ;
     Sintomas sintomas;
 
+    final CargarRIU frameRegistro = this;
+
     public CargarRIU(Sintomas sintomas){
         super("Cargar Sintomas");
         this.sintomas = sintomas;
+        ultimo=new Registro(new Date(),new Sintomas());
         red = new Redactor();
         lista1 = new JList();
         lista1.setBounds(5,5,350,300);
@@ -36,6 +42,7 @@ public class CargarRIU extends JFrame {
         impresion = new JTextArea();
         impresion.setForeground(Color.BLUE);
         impresion.setBounds(5,310,705,200);
+        impresion.setEditable(false);
         cargarButton=new JButton("Cargar");
         cargarButton.setBounds(605,530,100,35);
         actualizarRegistros();
@@ -44,12 +51,24 @@ public class CargarRIU extends JFrame {
         l2=new DefaultListModel<>();
         lista2.setModel(l2);
         add(cargarButton);
-        add(impresion);
-        add(lista1);
-        add(lista2);
+        scroll = new JScrollPane(impresion);
+        scroll.setBounds(5,310,705,200);
+        scroll.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
+        scroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+        add(scroll);
+        scrollList1 = new JScrollPane(lista1);
+        scrollList1.setBounds(5,5,350,300);
+        //scrollList1.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
+        scrollList1.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+        scrollList2 = new JScrollPane(lista2);
+        scrollList2.setBounds(360,5,350,300);
+        //scrollList2.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
+        scrollList2.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+        add(scrollList1);
+        add(scrollList2);
 
 
-        final CargarRIU frameRegistro = this;
+
 
         this.addWindowListener(new WindowAdapter(){
 
@@ -73,6 +92,7 @@ public class CargarRIU extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 cargarRegistro();
                 actualizarRegistros();
+                cerrarVentana();
             }
         });
         lista1.addMouseListener(new MouseAdapter() {
@@ -153,6 +173,19 @@ public class CargarRIU extends JFrame {
     }
     public Registro getUltimo() {return ultimo;}
 
+    public void cerrarVentana(){
+        try {
+            synchronized(frameRegistro){
+                frameRegistro.notify();
+            }
+            frameRegistro.setVisible(false);
+            frameRegistro.dispose();
+        } catch (Exception e){
+            System.out.println(e.getMessage());
+            System.out.println("Error al guardar");
+        }
+
+    }
     /*public static void main(String[]args){
         cargarsintomas.archivos.Redactor red = new cargarsintomas.archivos.Redactor();
         Sintomas s = red.leerSintoma();

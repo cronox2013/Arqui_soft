@@ -5,6 +5,8 @@ import monitor.Registros;
 import monitor.Sintoma;
 import monitor.Sintomas;
 
+import javax.swing.*;
+import java.awt.*;
 import java.io.*;
 import java.util.Date;
 
@@ -18,10 +20,19 @@ public class Redactor {
         if(new File (path2).exists()){
             res += path2;
         }else{
-            res+= path1;
+            try {
+                File myObj = new File(path1);
+                if (myObj.createNewFile()) {
+                    JOptionPane.showMessageDialog(null, "Archivo Creado: "+ myObj.getName(),  "Exito", JOptionPane.INFORMATION_MESSAGE);
+                }
+            } catch (IOException e) {
+                System.out.println("An error occurred.");
+                e.printStackTrace();
+            }
+            res += path1;
         }
 
-        System.out.println(res);
+        //System.out.println(res);
         return res;
     }
 
@@ -36,10 +47,15 @@ public class Redactor {
         try (ObjectOutputStream objectOutput = new ObjectOutputStream(
                 new FileOutputStream(path))) {
             objectOutput.writeObject(registros);
+            JOptionPane.showMessageDialog(null, "Registro Añadido", "InfoBox: " + "Exito", JOptionPane.INFORMATION_MESSAGE);
+            //System.out.println("Agregado Correctamente");
+
         } catch (FileNotFoundException e) {
             e.printStackTrace();
+            JOptionPane.showMessageDialog(null, e.getMessage(), "InfoBox: " + "Error", JOptionPane.ERROR_MESSAGE);
         } catch (IOException e) {
             e.printStackTrace();
+            JOptionPane.showMessageDialog(null, e.getMessage(), "InfoBox: " + "Error", JOptionPane.ERROR_MESSAGE);
         }
         return true;
     }
@@ -52,7 +68,7 @@ public class Redactor {
             ObjectInputStream tuberiaEntrada = new ObjectInputStream(ficheroIn);
             registros = (Registros) tuberiaEntrada.readObject();
         } catch (IOException e) {
-            System.out.println("Lectura terminada");
+            //System.out.println("Lectura terminada");
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }

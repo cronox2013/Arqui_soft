@@ -4,6 +4,7 @@ package cargarsintomas.archivos;
 import monitor.Sintoma;
 import monitor.Sintomas;
 
+import javax.swing.*;
 import java.io.*;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -19,10 +20,20 @@ public class Redactor {
         String res="";
         if(new File (path2).exists()){
             res += path2;
+
         }else{
-            res+= path1;
+            try {
+                File myObj = new File(path1);
+                if (myObj.createNewFile()) {
+                    JOptionPane.showMessageDialog(null, "Archivo Creado: "+ myObj.getName(),  "Exito", JOptionPane.INFORMATION_MESSAGE);
+                }
+            } catch (IOException e) {
+                System.out.println("An error occurred.");
+                e.printStackTrace();
+            }
+            res += path1;
         }
-        System.out.println(res);
+        //System.out.println(res);
         return res;
     }
 
@@ -90,19 +101,19 @@ public class Redactor {
         Sintoma s=null;
         Sintomas sintomas= new Sintomas();
         try {
-            System.out.println(1);
+            //System.out.println(1);
             ficheroIn = new FileInputStream(path);
-            System.out.println(2);
+            //System.out.println(2);
             
             ObjectInputStream tuberiaEntrada = new ObjectInputStream(ficheroIn);
-            System.out.println(3);
+            //System.out.println(3);
             s = (Sintoma)tuberiaEntrada.readObject();
             while(true){
                 sintomas.add(s);
                 s = (Sintoma)tuberiaEntrada.readObject();
             }
         } catch (IOException  e) {
-            System.out.println("Lectura terminada");
+            //System.out.println("Lectura terminada");
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }
@@ -142,7 +153,7 @@ public Sintoma crearObjeto(String nonSintoma,String nombre){
         } catch (ClassNotFoundException classNotFoundException) {
             classNotFoundException.printStackTrace();
         } catch (NoSuchMethodException classNotFoundException) {
-            System.out.println("Clase no instanciada Detectada");
+            //System.out.println("Clase no instanciada Detectada");
             //classNotFoundException.printStackTrace();
         } catch (IllegalAccessException illegalAccessException) {
             illegalAccessException.printStackTrace();
