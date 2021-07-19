@@ -1,17 +1,12 @@
-import cargarsintomas.archivos.Redactor;
 import monitor.Monitor;
-import monitor.Sintoma;
-import monitor.Sintomas;
-import sintomas.PrimeraFase;
+
+
 
 public class Main {
 
-    public static void main(String[] args){
-        System.out.println("diagnostico");
+    public static void main(String[] args) {
         Monitor monitor = new Monitor();
         monitor.monitorear();
-        System.out.println("resultado: " + monitor.getResultado());
-
+        System.out.println("Diagnostico : "+monitor.getResultado());
     }
-
 }

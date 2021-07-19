@@ -34,4 +34,9 @@ public class DiagnosticoSimple extends FuncionDiagnostico {
         return pesoSintomas;
     }
 
+    @Override
+    public String getMessage() {
+        return null;
+    }
+
 }

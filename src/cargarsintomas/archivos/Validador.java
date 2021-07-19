@@ -3,7 +3,6 @@ package cargarsintomas.archivos;
 import monitor.Sintoma;
 import monitor.Sintomas;
 
-import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -11,7 +10,7 @@ public class Validador {
 
     public boolean Validar(Sintoma sintoma){
         boolean res = true;
-        Redactor red = new Redactor();
+        RedactorSintomas red = new RedactorSintomas();
         Sintomas sintomas = red.leerSintoma();
         for(Sintoma sin : sintomas){
             if(sin.toString().equals(sintoma.toString())){

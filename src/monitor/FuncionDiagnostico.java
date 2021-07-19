@@ -10,4 +10,5 @@ public abstract class FuncionDiagnostico {
 
     public abstract int diagnostico(Registros registros);
 
+    public abstract String getMessage();
 }

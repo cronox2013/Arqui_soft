@@ -1,26 +1,25 @@
 package cargarsintomas;
 
-import cargarsintomas.archivos.Redactor;
+import cargarsintomas.ventanaSinto.CargarSIU;
+import cargarsintomas.archivos.RedactorSintomas;
 import monitor.Sintomas;
-
-import java.util.Scanner;
 
 public class CargarSintomas {
 
     private Sintomas sintomas;
-    private Redactor red;
+    private RedactorSintomas red;
+    private CargarSIU ui;
 
     public CargarSintomas() {
-        red = new Redactor();
+        red = new RedactorSintomas();
         sintomas = red.leerSintoma();
     }
 
     public Sintomas getSintomas() {
-        CargarSIU ui = new CargarSIU();
-        Scanner si = new Scanner(System.in);
-        //si.nextLine();
         sintomas = red.leerSintoma();
+        ui = new CargarSIU(sintomas);
         return sintomas;
     }
+
 
 }

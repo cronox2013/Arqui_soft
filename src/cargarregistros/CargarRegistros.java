@@ -1,36 +1,31 @@
 package cargarregistros;
 
-
-import cargarregistros.archivos.Redactor;
+import cargarregistros.archivos.RedactorRegistros;
+import cargarregistros.ventanaReg.CargarRUI;
 import monitor.Registro;
 import monitor.Registros;
 import monitor.Sintomas;
 
-import java.util.Scanner;
-
-
 public class CargarRegistros {
 
-    private Registros registros;
-    private Redactor red;
-    private Sintomas sintomas;
-    private Registro ultimo;
-
+    private final Sintomas sintomas;
+    private CargarRUI inter;
     public CargarRegistros(Sintomas sintomas) {
-        this.sintomas= sintomas;
-        red = new Redactor();
-        registros = red.leerRegistro();
+        this.sintomas = sintomas;
+    }
+    public Registro getRegistro() {
+        inter =new CargarRUI(sintomas);
+        Registro r;
+        r = inter.getUltimo();
+        return r;
+    }
+    public Registros getRegistros(){
+        inter =new CargarRUI(sintomas);
+        RedactorRegistros redactorRegistros = new RedactorRegistros();
+        return redactorRegistros.leerRegistro();
+    }
+    public void mostrarNotificacion(String mensaje,int diganostico){
+         inter.mostrarNotificacion(mensaje,diganostico);
     }
 
-    public Registros getRegistros() {
-        return registros;
-    }
-
-    public Registro getRegistro(){
-        CargarRIU ui= new CargarRIU(sintomas);
-        Scanner si = new Scanner(System.in);
-        //si.nextLine();
-        ultimo = ui.getUltimo();
-        return ultimo;
-    }
 }

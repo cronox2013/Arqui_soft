@@ -1,74 +1,64 @@
 package cargarsintomas.archivos;
 
-
 import monitor.Sintoma;
 import monitor.Sintomas;
 
-import javax.swing.*;
 import java.io.*;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 
-public class Redactor {
-    private String path = getPath();
+public class RedactorSintomas {
+    private String path;
     private String pathCategorias = "sintomas";
     private String pathCategorias2 = "out/production/MonitorCovid/sintomas";
+    private boolean esUnJar;
+    public RedactorSintomas(){
+        esUnJar=false;
+        path = getPath();
 
+    }
     public String getPath(){
         String path1 = "cargarsintomas/sintomas.txt";
-        String path2 = "src/cargarsintomas/sintomas.txt";
+        String path2 = "src/cargarsintomas/AndyGarciaSintomas.dat";
+        String path3 = "AndyGarciaSintomas.dat";
         String res="";
         if(new File (path2).exists()){
-            res += path2;
+            res =path2;
 
         }else{
             try {
                 File myObj = new File(path1);
-                if (myObj.createNewFile()) {
-                    JOptionPane.showMessageDialog(null, "Archivo Creado: "+ myObj.getName(),  "Exito", JOptionPane.INFORMATION_MESSAGE);
-                }
+                myObj.createNewFile();
+                res =path1;
             } catch (IOException e) {
-                System.out.println("An error occurred.");
-                e.printStackTrace();
+                res =path3;
+                File myObj = new File(path3);
+                esUnJar=true;
+                try {
+                    myObj.createNewFile();
+                } catch (IOException ioException) {
+                }
             }
-            res += path1;
+
         }
-        //System.out.println(res);
         return res;
     }
 
     public void aniadirSintoma(Sintoma s)
     {
-
         File archivo = new File(path);
-
         if(archivo.length()==0){
             escribirSintomaCabecera(s);
         }else{
             escribirSintoma(s);
         }
 
-
-        /*File archivo = new File(path);
-        if(archivo.exists()){
-        if(archivo.length()==0){
-            escribirSintoma(s);
-        }else{
-            escribirSintomaCabecera(s);
-        }}
-        else{
-            try {
-                archivo.createNewFile();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-        }*/
     }
 
     public void escribirSintoma (Sintoma s)
     {
-
         try
         {
             MiObjectOutputStream oos = new MiObjectOutputStream(
@@ -88,8 +78,6 @@ public class Redactor {
                 new FileOutputStream(path, true))) {
             objectOutput.writeObject(s);
             objectOutput.reset();
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -101,19 +89,15 @@ public class Redactor {
         Sintoma s=null;
         Sintomas sintomas= new Sintomas();
         try {
-            //System.out.println(1);
             ficheroIn = new FileInputStream(path);
-            //System.out.println(2);
-            
             ObjectInputStream tuberiaEntrada = new ObjectInputStream(ficheroIn);
-            //System.out.println(3);
+
             s = (Sintoma)tuberiaEntrada.readObject();
             while(true){
                 sintomas.add(s);
                 s = (Sintoma)tuberiaEntrada.readObject();
             }
         } catch (IOException  e) {
-            //System.out.println("Lectura terminada");
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }
@@ -122,6 +106,31 @@ public class Redactor {
     }
 
     public String[] getCategorias(){
+        String [] res;
+        List<String> listaClasesPaquete = new ArrayList<>();
+        if (esUnJar) {
+            try {
+                ZipInputStream zip = new ZipInputStream(new FileInputStream("home.jar"));
+                for (ZipEntry entry = zip.getNextEntry(); entry != null; entry = zip.getNextEntry()) {
+                    if (!entry.isDirectory() && entry.getName().endsWith(".class")) {
+                        String className = entry.getName().replace('/', '.'); // including ".class"
+
+                        if (className.split("\\.")[0].equals("sintomas")) {
+                            listaClasesPaquete.add(className.split("\\.")[1]);
+                        }
+                    }
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            res = listaClasesPaquete.toArray(new String [0]);
+        }else{
+             res = getCategoria();
+        }
+        return res;
+    }
+
+    private String[] getCategoria(){
         String[] cats ;
         File folder;
         if(new File (pathCategorias2).exists()){
@@ -140,31 +149,9 @@ public class Redactor {
         }
         return cats;
 
-}
-
-public Sintoma crearObjeto(String nonSintoma,String nombre){
-        Sintoma s = null;
-        Class<?> c;
-        try {
-            c = Class.forName(nombre);
-            Constructor<?> cons = c.getConstructor(String.class);
-            Object object = cons.newInstance(new Object[] { nonSintoma });
-            s = (Sintoma) object;
-        } catch (ClassNotFoundException classNotFoundException) {
-            classNotFoundException.printStackTrace();
-        } catch (NoSuchMethodException classNotFoundException) {
-            //System.out.println("Clase no instanciada Detectada");
-            //classNotFoundException.printStackTrace();
-        } catch (IllegalAccessException illegalAccessException) {
-            illegalAccessException.printStackTrace();
-        } catch (InstantiationException instantiationException) {
-            instantiationException.printStackTrace();
-        } catch (InvocationTargetException invocationTargetException) {
-            invocationTargetException.printStackTrace();
-        }
-        return s;
     }
-    public boolean doyClase(String n,String nombre) {
-        return crearObjeto(n,nombre) instanceof Sintoma;
+    public boolean doyClase(String n,String categoria) {
+        Sintoma sinto =(new ObjetoSintoma()).crearObjeto(categoria, n);
+        return sinto instanceof Sintoma;
     }
 }
